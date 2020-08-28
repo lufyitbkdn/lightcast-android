@@ -993,7 +993,9 @@ abstract public class ApiCallBase implements UnauthorizedInterceptorListener {
     protected RequestParams getRequestParams() {
         return null;
     }
-
+    protected  JSONObject getRequestBodyJSON(){
+        return null;
+    }
     protected int getRequestMaxRetries() {
         return DEFAULT_MAX_RETRIES;
     }
@@ -1170,6 +1172,8 @@ abstract public class ApiCallBase implements UnauthorizedInterceptorListener {
         RequestParams rparams = getRequestParams();
         rparams = rparams != null ? rparams : new RequestParams();
 
+        JSONObject jsonBody = getRequestBodyJSON();
+
         HashMap<String, String> preparedRequestParams = preparedParams(rparams);
 
         log(getRequestType().toString().toUpperCase() + " " + mConnectionUrl + ": " + preparedRequestParams);
@@ -1196,21 +1200,35 @@ abstract public class ApiCallBase implements UnauthorizedInterceptorListener {
 
         } else if (rt == RequestType.Post) {
             builder = new ANRequest.PostRequestBuilder<>(mConnectionUrl);
-
-            if (preparedRequestParams != null) {
+            if(jsonBody!=null){
+                ((ANRequest.PostRequestBuilder) builder).addJSONObjectBody(jsonBody);
+                if (preparedRequestParams != null) {
+                    ((ANRequest.PostRequestBuilder) builder).addQueryParameter(preparedRequestParams);
+                }
+            }else if (preparedRequestParams != null) {
                 ((ANRequest.PostRequestBuilder) builder).addBodyParameter(preparedRequestParams);
             }
 
         } else if (rt == RequestType.Put) {
             builder = new ANRequest.PutRequestBuilder(mConnectionUrl);
 
-            if (preparedRequestParams != null) {
+            if(jsonBody!=null){
+                ((ANRequest.PostRequestBuilder) builder).addJSONObjectBody(jsonBody);
+                if (preparedRequestParams != null) {
+                    ((ANRequest.PostRequestBuilder) builder).addQueryParameter(preparedRequestParams);
+                }
+            }else if (preparedRequestParams != null) {
                 ((ANRequest.PostRequestBuilder) builder).addBodyParameter(preparedRequestParams);
             }
         } else if (rt == RequestType.Delete) {
             builder = new ANRequest.DeleteRequestBuilder(mConnectionUrl);
 
-            if (preparedRequestParams != null) {
+            if(jsonBody!=null){
+                ((ANRequest.PostRequestBuilder) builder).addJSONObjectBody(jsonBody);
+                if (preparedRequestParams != null) {
+                    ((ANRequest.PostRequestBuilder) builder).addQueryParameter(preparedRequestParams);
+                }
+            }else if (preparedRequestParams != null) {
                 ((ANRequest.PostRequestBuilder) builder).addBodyParameter(preparedRequestParams);
             }
         } else {
