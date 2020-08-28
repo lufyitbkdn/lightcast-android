@@ -12,55 +12,39 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-public class OperationResponse {
-    private int code;
-    private String message;
+public class ServerResponse<T> {
     private boolean isSuccessful;
     private HashMap<String, Object> data;
     private ApiServerErrorModel serverError;
 
     private int fetchedDataCount;
-    private List<?> fetchedData;
+    private List<T> fetchedData;
 
-    public OperationResponse(final Object fetchedDataItem) {
-        if (fetchedDataItem instanceof ApiServerErrorModel) {
-            this.serverError = (ApiServerErrorModel) fetchedDataItem;
-            this.isSuccessful = false;
-            this.code = serverError.code;
-            this.message = serverError.message;
-        } else if (fetchedDataItem != null) {
-            this.fetchedData = new ArrayList<Object>() {{
-                add(fetchedDataItem);
-            }};
-            this.fetchedDataCount = 1;
-            isSuccessful = true;
-        }
+    public ServerResponse(final T fetchedDataItem) {
+        this.fetchedData = new ArrayList<T>() {{
+            add(fetchedDataItem);
+        }};
+        this.fetchedDataCount = 1;
+        isSuccessful = true;
     }
 
-    public OperationResponse(final List<?> fetchedData, int fetchedDataCount) {
+    public ServerResponse(final List<T> fetchedData, int fetchedDataCount) {
         this.fetchedData = fetchedData;
         this.fetchedDataCount = fetchedDataCount;
         isSuccessful = true;
     }
 
-    public OperationResponse(final HashMap<String, Object> data) {
-        this.data = data;
-        isSuccessful = true;
-    }
-
-    public OperationResponse(int code, final String message, final ApiServerErrorModel serverError) {
-        this.code = code;
-        this.message = message;
+    public ServerResponse(final ApiServerErrorModel serverError) {
         this.serverError = serverError;
         isSuccessful = false;
     }
 
     public int getCode() {
-        return code;
+        return serverError != null ? serverError.code : 0;
     }
 
     public String getMessage() {
-        return message;
+        return serverError != null ? serverError.message : null;
     }
 
     public HashMap<String, Object> getData() {
@@ -113,11 +97,11 @@ public class OperationResponse {
         return fetchedDataCount;
     }
 
-    public List<?> getFetchedData() {
+    public List<T> getFetchedData() {
         return fetchedData;
     }
 
-    public Object getFirstObject() {
+    public T getFirstObject() {
         return fetchedData != null && fetchedData.size() > 0 ? fetchedData.get(0) : null;
     }
 

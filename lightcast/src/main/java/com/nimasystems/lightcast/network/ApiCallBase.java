@@ -445,7 +445,17 @@ abstract public class ApiCallBase implements UnauthorizedInterceptorListener {
         return this;
     }
 
-    protected void log(String str) {
+    protected void logDebugOrInfo(String str) {
+        if (mLogger != null) {
+            if (mDebug) {
+                mLogger.info(mConnectionId + ": " + str);
+            } else {
+                mLogger.debug(mConnectionId + ": " + str);
+            }
+        }
+    }
+
+    protected void logInfo(String str) {
         if (mLogger != null) {
             mLogger.info(mConnectionId + ": " + str);
         }
@@ -1176,7 +1186,7 @@ abstract public class ApiCallBase implements UnauthorizedInterceptorListener {
 
         HashMap<String, String> preparedRequestParams = preparedParams(rparams);
 
-        log(getRequestType().toString().toUpperCase() + " " + mConnectionUrl + ": " + preparedRequestParams);
+        logDebugOrInfo(getRequestType().toString().toUpperCase() + " " + mConnectionUrl + ": " + preparedRequestParams);
 
         ConcurrentHashMap<String, RequestParams.FileWrapper> fparams = rparams.getFileParams();
         boolean requestIsMultipart = fparams != null && fparams.size() > 0;
@@ -1475,7 +1485,7 @@ abstract public class ApiCallBase implements UnauthorizedInterceptorListener {
     public void cancel(boolean interrupt) {
         if (!mIsCancelled && mIsBusy && objectTag != null) {
             mIsCancelled = true;
-            log("Cancelling the request (" + mConnectionUrl + ")");
+            logInfo("Cancelling the request (" + mConnectionUrl + ")");
             AndroidNetworking.forceCancel(objectTag);
         }
     }

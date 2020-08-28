@@ -157,11 +157,11 @@ public class StringUtils {
     }
 
     public static boolean safeEqualsIgnoreCase(String string1, String string2) {
-        return ((string1 == null ? string2 == null : string1.equalsIgnoreCase(string2)));
+        return ((StringUtils.isNullOrEmpty(string1) ? StringUtils.isNullOrEmpty(string2) : string1.equalsIgnoreCase(string2)));
     }
 
     public static boolean safeEquals(String string1, String string2) {
-        return ((string1 == null ? string2 == null : string1.equals(string2)));
+        return ((StringUtils.isNullOrEmpty(string1) ? StringUtils.isNullOrEmpty(string2) : string1.equals(string2)));
     }
 
     public static String cyrToLatTransliterate(String cyrStr, boolean doInverse) {
